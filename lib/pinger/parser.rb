@@ -26,7 +26,10 @@ module Pinger
     end
 
     def parse_options
-      options = {}
+      options = {
+        interval: 10,
+        duration: 60
+      }
 
       parser = OptionParser.new do |opts|
         opts.banner = "Usage: pinger [options] url"
