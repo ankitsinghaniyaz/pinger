@@ -1,8 +1,8 @@
 # Pinger
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/pinger`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Pinger probes a given website for responses. It makes requests to the destination website
+for the specified duration in the specified interval. It computes the final mean response time
+and make it available to the users
 
 ## Installation
 
@@ -22,7 +22,10 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Usage: pinger [options] url
+    -i, --interval N                 Probe interval in seconds, default: 10 seconds
+    -d, --duration D                 Duration to run the test, deafult: 60 seconds
+
 
 ## Development
 

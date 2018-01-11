@@ -1,19 +1,33 @@
 require "optionparser"
 
 module Pinger
+  # Parser is the options parser wrapper for the Pinger library.
+  # All the parameters related validations and mutatations are done here
   class Parser
-    attr_accessor :args, :options, :url, :parser
+    # @return [ARGV] the acutal list of parameters passed to the cli
+    attr_accessor :args
+    # @return [Hash] the hash of all the parsed options provided via the cli
+    attr_accessor :options
+    # @return [String] valid and parsed url to which the requests will be made
+    attr_accessor :url
+    # @return [OptionParser] the option parser object, which contains the help instructions
+    attr_accessor :parser
 
     def initialize(args)
       self.args = args
     end
 
+    # parse! reads the arguments array and extract valid options and run validations.
+    # It will also do some processing and validation on the url provided
+    # @return [[options, String]] two values first is the options hash and the parsed url
     def parse!
       parse_options
       parse_url
 
       [self.options, self.url]
     end
+
+    private
 
     def parse_url
       # check if the url was provided or not and if more than one url was provied
