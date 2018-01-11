@@ -22,10 +22,11 @@ Or install it yourself as:
 
 ## Usage
 
+```bash
 Usage: pinger [options] url
     -i, --interval N                 Probe interval in seconds, default: 10 seconds
     -d, --duration D                 Duration to run the test, deafult: 60 seconds
-
+```
 
 ## Development
 
