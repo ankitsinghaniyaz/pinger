@@ -16,13 +16,23 @@ module Pinger
     end
 
     def parse_url
+      # check if the url was provided or not and if more than one url was provied
       if self.args.length == 0 || self.args.length > 1
         puts "URL is required to use pinger"
         puts parser
-        exit 1
+        exit Pinger::ExitCode::URL_ERROR
       end
 
+      # ok so we have one url, let's set it
       self.url = self.args[0]
+
+      # now let's add an http to the url if the protocol is not mentioned
+      # adding http to be safe, as the webiste will redirect to https anyways
+      unless self.url[/\Ahttp:\/\//] || self.url[/\Ahttps:\/\//]
+        self.url = "http://#{self.url}"
+      end
+
+      self.url
     end
 
     def parse_options
@@ -36,7 +46,7 @@ module Pinger
         opts.on("-i", "--interval N", Integer, "Probe interval in seconds, default: 10 seconds") do |interval|
           options[:interval] = interval
         end
-        opts.on("-d", "--duration D", "Duration to run the test, deafult: 60 seconds") do |duration|
+        opts.on("-d", "--duration D", Integer, "Duration to run the test, deafult: 60 seconds") do |duration|
           options[:duration] = duration
         end
       end
@@ -49,8 +59,7 @@ module Pinger
       puts error
       # show the usage instructions
       puts parser
-      # exit with non 0 error code
-      exit 1
+      exit Pinger::ExitCode::OPTIONS_ERROR
     end
   end
 end
