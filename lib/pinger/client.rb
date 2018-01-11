@@ -14,11 +14,15 @@ module Pinger
     attr_accessor :interval
     # @return [Number] no of trips/requests the client will make
     attr_accessor :trips
+    # @return [[Number]] array of response times in seconds
+    attr_accessor :response_times
 
     def initialize(website, duration, interval)
       self.website = website
       self.duration = duration
       self.interval = interval
+      self.trips = duration / interval
+      self.response_times = []
     end
 
     # compute_mean_response is the methods which make calculated number of trips
@@ -26,27 +30,8 @@ module Pinger
     # and how the mean response time
     # @return [String] the mean response time in milliseconds
     def compute_mean_response
-      trips = duration / interval
-      response_times = []
-
-      # make a trip, async
       (0...trips).map do |trip|
-        Thread.new do
-          # sleep for a calculated interval
-          # eg: trip1: 0 * 10 = 0
-          # eg: trip2: 1 * 10 = 10
-          sleep(trip * interval)
-
-          # time the actual requests
-          time_taken = Benchmark.realtime do
-            make_request
-          end
-
-          # convert the time taken in to milliseconds
-          time_taken *= 1000
-          response_times << time_taken
-          puts("#{website} response time for trip #{trip + 1}: #{time_taken.round(2)} ms")
-        end
+        async_benchmark_request(trip)
       end.map(&:value)
 
       # calcualte the sum of response times
@@ -56,6 +41,27 @@ module Pinger
 
 
     private
+
+    def async_benchmark_request(trip)
+      Thread.new do
+        # sleep for a calculated interval
+        # eg: trip1: 0 * 10 = 0
+        # eg: trip2: 1 * 10 = 10
+        sleep(trip * interval)
+        # time the actual requests
+        time_taken = benchmark_request
+        response_times << time_taken
+        puts("#{website} response time for trip #{trip + 1}: #{time_taken.round(2)} ms")
+      end
+    end
+
+    def benchmark_request
+      time = Benchmark.realtime do
+        make_request
+      end
+      # convert the time taken in to milliseconds
+      time *= 1000
+    end
 
     def make_request
       Net::HTTP.get(URI(website))
