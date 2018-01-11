@@ -66,7 +66,7 @@ module Pinger
       end
 
       self.parser = parser
-      parser.parse!
+      parser.parse!(args)
       self.options = options
     rescue OptionParser::ParseError => error
       # show the error message
