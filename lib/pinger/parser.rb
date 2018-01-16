@@ -14,7 +14,7 @@ module Pinger
     attr_accessor :parser
 
     def initialize(args)
-      self.args = args
+      @args = args
     end
 
     # parse! reads the arguments array and extract valid options and run validations.
@@ -24,29 +24,29 @@ module Pinger
       parse_options
       parse_url
 
-      [self.options, self.url]
+      [options, url]
     end
 
     private
 
     def parse_url
       # check if the url was provided or not and if more than one url was provied
-      if self.args.length == 0 || self.args.length > 1
+      if args.length == 0 || args.length > 1
         puts "URL is required to use pinger"
         puts parser
         exit Pinger::ExitCode::URL_ERROR
       end
 
       # ok so we have one url, let's set it
-      self.url = self.args[0]
+      @url = args[0]
 
       # now let's add an http to the url if the protocol is not mentioned
       # adding http to be safe, as the webiste will redirect to https anyways
-      unless self.url[/\Ahttp:\/\//] || self.url[/\Ahttps:\/\//]
-        self.url = "http://#{self.url}"
+      unless url[/\Ahttp:\/\//] || url[/\Ahttps:\/\//]
+        @url = "http://#{url}"
       end
 
-      self.url
+      url
     end
 
     def parse_options
@@ -65,9 +65,9 @@ module Pinger
         end
       end
 
-      self.parser = parser
+      @parser = parser
       parser.parse!(args)
-      self.options = options
+      @options = options
     rescue OptionParser::ParseError => error
       # show the error message
       puts error
